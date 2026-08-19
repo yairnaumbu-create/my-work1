@@ -25,3 +25,4 @@ jobs:
             "$URL"
           echo
           echo "NAUMBOT cycle completed"
+# persistence-fix-trigger 2026-08-19
