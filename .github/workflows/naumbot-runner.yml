@@ -2,27 +2,34 @@ name: NAUMBOT Runner
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    # Off the crowded 0/5/10-minute marks. Covers US market hours across DST.
+    - cron: '2-59/6 13-21 * * 1-5'
   workflow_dispatch:
   push:
     paths:
       - '.github/workflows/naumbot-runner.yml'
 
+concurrency:
+  group: naumbot-paper-runner
+  cancel-in-progress: false
+
 jobs:
   run-naumbot:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 3
     steps:
       - name: Wake NAUMBOT paper-trading engine
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://naumbot-v3-yrnambu-5971s-projects.vercel.app/api/cron"
+          URL="https://naumbot-v3-yrnambu-5971s-projects.vercel.app/api/cron?source=github-runner"
           echo "Calling NAUMBOT at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          curl --fail --silent --show-error \
-            --retry 3 --retry-delay 5 --max-time 180 \
-            -H 'User-Agent: naumbot-github-runner' \
-            "$URL"
+          if ! curl --fail --silent --show-error --max-time 70 \
+            -H 'User-Agent: naumbot-github-runner' "$URL"; then
+            echo "First call failed; retrying once after 35 seconds"
+            sleep 35
+            curl --fail --silent --show-error --max-time 70 \
+              -H 'User-Agent: naumbot-github-runner-retry' "$URL"
+          fi
           echo
           echo "NAUMBOT cycle completed"
-# trusted-sources-speed-upgrade 2026-08-19T17:55+03:00
