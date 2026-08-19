@@ -2,8 +2,8 @@ name: NAUMBOT Runner
 
 on:
   schedule:
-    # Off the crowded 0/5/10-minute marks. Covers US market hours across DST.
-    - cron: '2-59/6 13-21 * * 1-5'
+    # 24/7. Trading logic itself only opens positions during US market hours.
+    - cron: '2-59/6 * * * *'
   workflow_dispatch:
   push:
     paths:
@@ -33,4 +33,3 @@ jobs:
           fi
           echo
           echo "NAUMBOT cycle completed"
-# post-deploy-trigger 2026-08-19T18:12+03:00
