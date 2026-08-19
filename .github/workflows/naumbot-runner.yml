@@ -25,4 +25,4 @@ jobs:
             "$URL"
           echo
           echo "NAUMBOT cycle completed"
-# q-fix-trigger 2026-08-19T17:40+03:00
+# manual-progress-check 2026-08-19T17:42+03:00
