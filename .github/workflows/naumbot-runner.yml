@@ -2,8 +2,8 @@ name: NAUMBOT Runner
 
 on:
   schedule:
-    # 24/7. Trading logic itself only opens positions during US market hours.
-    - cron: '2-59/6 * * * *'
+    # 24/7. GitHub's practical minimum cadence is ~5 minutes.
+    - cron: '*/5 * * * *'
   workflow_dispatch:
   push:
     paths:
@@ -26,11 +26,11 @@ jobs:
           echo "Calling NAUMBOT at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           if ! curl --fail --silent --show-error --max-time 70 \
             -H 'User-Agent: naumbot-github-runner' "$URL"; then
-            echo "First call failed; retrying once after 35 seconds"
-            sleep 35
+            echo "First call failed; retrying once after 25 seconds"
+            sleep 25
             curl --fail --silent --show-error --max-time 70 \
               -H 'User-Agent: naumbot-github-runner-retry' "$URL"
           fi
           echo
           echo "NAUMBOT cycle completed"
-# verify-router-deploy-2026-08-19T19:30+03:00
+# price-refresh-cadence-5m-2026-08-19
