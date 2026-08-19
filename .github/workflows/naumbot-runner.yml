@@ -1,0 +1,27 @@
+name: NAUMBOT Runner
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/naumbot-runner.yml'
+
+jobs:
+  run-naumbot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Wake NAUMBOT paper-trading engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://naumbot-v3-yrnambu-5971s-projects.vercel.app/api/cron"
+          echo "Calling NAUMBOT at $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          curl --fail --silent --show-error \
+            --retry 3 --retry-delay 5 --max-time 180 \
+            -H 'User-Agent: naumbot-github-runner' \
+            "$URL"
+          echo
+          echo "NAUMBOT cycle completed"
